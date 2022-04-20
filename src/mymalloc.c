@@ -35,7 +35,9 @@ void* my_malloc(unsigned int size) {
 
 	// PLEASE
 
-	return NULL;
+	void* newBreak = sbrk(size);
+
+	return newBreak;
 }
 
 void my_free(void* ptr) {
@@ -43,4 +45,6 @@ void my_free(void* ptr) {
 		return;
 
 	// and here's where you free stuff.
+
+	brk(ptr);
 }
