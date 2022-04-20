@@ -1,6 +1,7 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <unistd.h>
+#include <stdbool.h>
 
 #include "mymalloc.h"
 
@@ -10,6 +11,13 @@
 // Don't change or remove these constants.
 #define MINIMUM_ALLOCATION  16
 #define SIZE_MULTIPLE       8
+
+typedef struct Header {
+	int data_size;
+	bool used;
+	struct Header* previous;
+	struct Header* next;
+} Header;
 
 unsigned int round_up_size(unsigned int data_size) {
 	if(data_size == 0)
