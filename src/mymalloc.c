@@ -105,7 +105,7 @@ void* my_malloc(unsigned int size) {
 if (largest_block == NULL) {
 	Header* h = construct_new_block(size);
 	insert_header(h);
-	return  PTR_ADD_BYTES(tail, sizeof(Header));
+	return  get_block_data(h);
 }
 
 	else {
