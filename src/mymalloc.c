@@ -57,11 +57,11 @@ Header* construct_new_header(unsigned int size) {
 	return h;
 }
 
-Header* get_chunk_header(void* ptr) {
+Header* get_block_header(void* ptr) {
 	return PTR_ADD_BYTES(ptr, sizeof(Header)*-1);
 }
 
-Header* get_chunk_data(void* ptr) {
+Header* get_block_data(void* ptr) {
 	return PTR_ADD_BYTES(ptr, sizeof(Header));
 }
 
@@ -110,7 +110,7 @@ if (largest == NULL) {
 
 	else {
 		largest->used = true;
-		return  get_chunk_data(largest);
+		return  get_block_data(largest);
 	}
 }
 
@@ -118,14 +118,14 @@ void my_free(void* ptr) {
 	if(ptr == NULL)
 		return;
 
-	Header* chunk_header = get_chunk_header(ptr);
+	Header* block_header = get_block_header(ptr);
 
-	if (is_tail(chunk_header)) {
-		tail = chunk_header->previous;
-		brk(chunk_header);
+	if (is_tail(block_header)) {
+		tail = block_header->previous;
+		brk(block_header);
 	}
 
 	else {
-		chunk_header->used = false;
+		block_header->used = false;
 	}
 }
