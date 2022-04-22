@@ -65,7 +65,7 @@ Header* get_block_data(void* ptr) {
 	return PTR_ADD_BYTES(ptr, sizeof(Header));
 }
 
-Header* get_worst_fit(unsigned int size) {
+Header* get_worst_fit_block(unsigned int size) {
 	Header* largest_block = NULL;
 	Header* cur;
 
@@ -100,7 +100,7 @@ void* my_malloc(unsigned int size) {
 
 	size = round_up_size(size);
 
-	Header* largest_block = get_worst_fit(size);
+	Header* largest_block = get_worst_fit_block(size);
 
 if (largest_block == NULL) {
 	Header* h = construct_new_header(size);
