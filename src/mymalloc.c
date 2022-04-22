@@ -47,7 +47,7 @@ void insert_header(Header* ptr) {
 	}
 }
 
-Header* construct_new_header(unsigned int size) {
+Header* construct_new_block(unsigned int size) {
 	Header* h = sbrk(sizeof(Header) + size);
 	h->data_size = size;
 	h->used = true;
@@ -103,7 +103,7 @@ void* my_malloc(unsigned int size) {
 	Header* largest_block = get_worst_fit_block(size);
 
 if (largest_block == NULL) {
-	Header* h = construct_new_header(size);
+	Header* h = construct_new_block(size);
 	insert_header(h);
 	return  PTR_ADD_BYTES(tail, sizeof(Header));
 }
