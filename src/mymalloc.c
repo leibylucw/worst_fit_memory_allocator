@@ -66,16 +66,16 @@ Header* get_block_data(void* ptr) {
 }
 
 Header* get_worst_fit(unsigned int size) {
-	Header* largest = NULL;
+	Header* largest_block = NULL;
 	Header* cur;
 
 	for (cur = head; cur != NULL; cur = cur->next) {
 		if (cur->data_size > size && cur->used == false) {
-			largest = cur;
+			largest_block = cur;
 		}
 	}
 
-	return largest;
+	return largest_block;
 }
 
 void print_headers() {
@@ -100,17 +100,17 @@ void* my_malloc(unsigned int size) {
 
 	size = round_up_size(size);
 
-	Header* largest = get_worst_fit(size);
+	Header* largest_block = get_worst_fit(size);
 
-if (largest == NULL) {
+if (largest_block == NULL) {
 	Header* h = construct_new_header(size);
 	insert_header(h);
 	return  PTR_ADD_BYTES(tail, sizeof(Header));
 }
 
 	else {
-		largest->used = true;
-		return  get_block_data(largest);
+		largest_block->used = true;
+		return  get_block_data(largest_block);
 	}
 }
 
