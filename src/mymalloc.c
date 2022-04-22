@@ -61,6 +61,10 @@ Header* get_chunk_header(void* ptr) {
 	return PTR_ADD_BYTES(ptr, sizeof(Header)*-1);
 }
 
+Header* get_chunk_data(void* ptr) {
+	return PTR_ADD_BYTES(ptr, sizeof(Header));
+}
+
 Header* get_worst_fit(unsigned int size) {
 	Header* largest = NULL;
 	Header* cur;
@@ -106,7 +110,7 @@ if (largest == NULL) {
 
 	else {
 		largest->used = true;
-		return  PTR_ADD_BYTES(largest, sizeof(Header));
+		return  get_chunk_data(largest);
 	}
 }
 
