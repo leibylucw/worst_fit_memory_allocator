@@ -5,10 +5,8 @@
 
 #include "mymalloc.h"
 
-// USE THIS GODDAMN MACRO OKAY
 #define PTR_ADD_BYTES(ptr, byte_offs) ((void*)(((char*)(ptr)) + (byte_offs)))
 
-// Don't change or remove these constants.
 #define MINIMUM_ALLOCATION 16
 #define SIZE_MULTIPLE 8
 #define MINIMUM_SPLIT_SIZE MINIMUM_ALLOCATION + sizeof(Header)
