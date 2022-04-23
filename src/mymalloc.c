@@ -54,16 +54,26 @@ Header* get_block_data(void* ptr) {
 }
 
 Header* get_worst_fit_block(unsigned int size) {
+	if (head == NULL) {
+		return NULL;
+	}
+
+	unsigned int largest_size = 0;
 	Header* largest_block = NULL;
 	Header* cur;
 
 	for (cur = head; cur != NULL; cur = cur->next) {
-		if (cur->data_size > size && cur->used == false) {
+		if (cur->data_size > largest_size && cur->used == false) {
+			largest_size = cur->data_size;
 			largest_block = cur;
 		}
 	}
 
-	return largest_block;
+	if (size <= largest_size && largest_block != NULL) {
+		return largest_block;
+	} else {
+		return NULL;
+	}
 }
 
 bool can_coalesce(Header* block_header) {
@@ -79,31 +89,43 @@ void make_neighbors(Header* block_header_1, Header* block_header_2) {
 	block_header_2->previous = block_header_1;
 }
 
-void coalesce(Header* cur) {
+Header* coalesce(Header* cur) {
 	Header* neighbor1 = cur->next;
 	Header* neighbor2 = neighbor1->next;
 
 	if (neighbor2 != NULL) {
 		make_neighbors(cur, neighbor2);
-	unsigned int extra_size = neighbor1->data_size + sizeof(Header);
-	cur->data_size += extra_size;
 	} else {
 	cur->next = NULL;
 	}
 
+unsigned int extra_size = neighbor1->data_size + sizeof(Header);
+	cur->data_size += extra_size;
+
 	if (neighbor1 == tail) {
 		tail = cur;
 	}
+
+	return cur;
 }
 
 void split(Header* old_header, unsigned int size) {
+	if (old_header == NULL) {
+		return;
+	}
+
 	if (old_header->data_size - (size + sizeof(Header)) >= MINIMUM_SPLIT_SIZE) {
 		Header* new_header = PTR_ADD_BYTES(old_header, sizeof(Header) + old_header->data_size);
 		construct_new_block(new_header, size, false);
 
 		Header* right_most_neighbor = old_header->next;
-		make_neighbors(old_header, new_header);
-		make_neighbors(new_header, right_most_neighbor);
+		if (right_most_neighbor != NULL) {
+			make_neighbors(old_header, new_header);
+			make_neighbors(new_header, right_most_neighbor);
+		} else {
+			make_neighbors(old_header, new_header);
+			new_header->next = NULL;
+		}
 	}
 }
 
@@ -131,7 +153,7 @@ if (largest_block == NULL) {
 	return  get_block_data(block_header);
 } else {
 		largest_block->used = true;
-		split(largest_block, size);
+		//split(largest_block, size);
 		return  get_block_data(largest_block);
 	}
 }
@@ -147,15 +169,19 @@ void my_free(void* ptr) {
 	cur->used = false;
 
 	if (can_coalesce(right_neighbor)) {
-		coalesce(cur);
+		cur = coalesce(cur);
 	}
 
 	if (can_coalesce(left_neighbor)) {
-		coalesce(left_neighbor);
+		cur = coalesce(left_neighbor);
 	}
 
 	if (tail->used == false) {
 		tail = cur->previous;
 		brk(cur);
+	}
+
+	if (tail == NULL) {
+		head = NULL;
 	}
 }
