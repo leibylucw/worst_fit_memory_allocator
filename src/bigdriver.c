@@ -321,7 +321,7 @@ void test_worst_fit() {
 
 
 int main() {
-	void* heap_at_start = sbrk(0);
+	// void* heap_at_start = sbrk(0);
 
 	// Uncomment a test and recompile before running it.
 	// When complete, you should be able to uncomment all the tests
@@ -334,6 +334,6 @@ int main() {
 	// test_worst_fit();
 
 	// Just to make sure!
-	check_heap_size("main", heap_at_start);
+	// check_heap_size("main", heap_at_start);
 	return 0;
 }
