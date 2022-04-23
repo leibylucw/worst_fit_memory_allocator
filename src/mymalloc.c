@@ -21,14 +21,6 @@ typedef struct Header {
 Header* head;
 Header* tail;
 
-bool is_head(Header* ptr) {
-	return ptr == head;
-}
-
-bool is_tail(Header* ptr) {
-	return ptr == tail;
-}
-
 void insert_header(Header* ptr) {
 	if (ptr == NULL) {
 		return;
@@ -100,7 +92,7 @@ void coalesce(Header* cur) {
 	cur->next = NULL;
 	}
 
-	if (is_tail(neighbor1)) {
+	if (neighbor1 == tail) {
 		tail = cur;
 	}
 }
@@ -145,9 +137,7 @@ if (largest_block == NULL) {
 	construct_new_block(block_header, size, true);
 	insert_header(block_header);
 	return  get_block_data(block_header);
-}
-
-	else {
+} else {
 		largest_block->used = true;
 		split(largest_block, size);
 		return  get_block_data(largest_block);
