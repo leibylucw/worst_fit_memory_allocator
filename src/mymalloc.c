@@ -107,13 +107,6 @@ void split(Header* old_header, unsigned int size) {
 	}
 }
 
-void print_headers() {
-	Header* cur;
-	for (cur = head; cur != NULL; cur = cur->next) {
-		printf("%d, %d\n", cur->data_size, cur->used);
-	}
-}
-
 unsigned int round_up_size(unsigned int data_size) {
 	if(data_size == 0)
 		return 0;
