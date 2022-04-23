@@ -84,8 +84,7 @@ void coalesce(Header* cur) {
 	Header* neighbor2 = neighbor1->next;
 
 	if (neighbor2 != NULL) {
-	cur->next = neighbor2;
-	neighbor2->previous = cur;
+		make_neighbors(cur, neighbor2);
 	unsigned int extra_size = neighbor1->data_size + sizeof(Header);
 	cur->data_size += extra_size;
 	} else {
