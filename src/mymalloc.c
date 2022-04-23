@@ -48,9 +48,9 @@ void insert_header(Header* ptr) {
 	}
 }
 
-void construct_new_block(Header* block_header, unsigned int size) {
+void construct_new_block(Header* block_header, unsigned int size, bool used) {
 	block_header->data_size = size;
-	block_header->used = true;
+	block_header->used = used;
 	block_header->previous = NULL;
 	block_header->next = NULL;
 }
@@ -110,7 +110,7 @@ void coalesce(Header* cur) {
 void split(Header* old_header, unsigned int size) {
 	if (old_header->data_size - (size + sizeof(Header)) >= MINIMUM_SPLIT_SIZE) {
 		Header* new_header = PTR_ADD_BYTES(old_header, sizeof(Header) + old_header->data_size);
-		construct_new_block(new_header, size);
+		construct_new_block(new_header, size, false);
 
 		Header* right_most_neighbor = old_header->next;
 		make_neighbors(old_header, new_header);
@@ -144,7 +144,7 @@ void* my_malloc(unsigned int size) {
 
 if (largest_block == NULL) {
 	Header* block_header = sbrk(sizeof(Header) + size);
-	construct_new_block(block_header, size);
+	construct_new_block(block_header, size, true);
 	insert_header(block_header);
 	return  get_block_data(block_header);
 }
