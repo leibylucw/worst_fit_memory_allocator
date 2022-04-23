@@ -328,10 +328,10 @@ int main() {
 	// and they should run flawlessly.
 
 	test_writing();
-	// test_reuse();
-	// test_coalescing();
-	// test_splitting();
-	// test_worst_fit();
+	test_reuse();
+	test_coalescing();
+	test_splitting();
+	test_worst_fit();
 
 	// Just to make sure!
 	// check_heap_size("main", heap_at_start);
