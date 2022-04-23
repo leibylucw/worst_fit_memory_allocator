@@ -24,14 +24,10 @@ Header* tail;
 void insert_header(Header* ptr) {
 	if (ptr == NULL) {
 		return;
-	}
-
-	else if (head == NULL) {
+	} else if (head == NULL) {
 		head = ptr;
 		tail = ptr;
-	}
-
-	else {
+	} else {
 		tail->next = ptr;
 		ptr->previous = tail;
 		tail = ptr;
@@ -69,7 +65,7 @@ Header* get_worst_fit_block(unsigned int size) {
 		}
 	}
 
-	if (size <= largest_size && largest_block != NULL) {
+	if (size <= largest_size) {
 		return largest_block;
 	} else {
 		return NULL;
@@ -109,38 +105,44 @@ unsigned int extra_size = neighbor1->data_size + sizeof(Header);
 	return cur;
 }
 
-void split(Header* old_header, unsigned int size) {
-	if (old_header == NULL) {
-		return;
+bool can_split(Header* block_header, unsigned int size) {
+	if (block_header->data_size - size >= MINIMUM_SPLIT_SIZE) {
+		return true;
+	} else {
+		return false;
 	}
+}
 
-	if (old_header->data_size - (size + sizeof(Header)) >= MINIMUM_SPLIT_SIZE) {
-		Header* new_header = PTR_ADD_BYTES(old_header, sizeof(Header) + old_header->data_size);
-		construct_new_block(new_header, size, false);
+void split(Header* old_header, unsigned int size) {
+	Header* new_header = PTR_ADD_BYTES(old_header, sizeof(Header) + size);
+	construct_new_block(new_header, old_header->data_size-size, false);
+	old_header->data_size = size;
 
-		Header* right_most_neighbor = old_header->next;
-		if (right_most_neighbor != NULL) {
-			make_neighbors(old_header, new_header);
-			make_neighbors(new_header, right_most_neighbor);
-		} else {
-			make_neighbors(old_header, new_header);
-			new_header->next = NULL;
-		}
+	Header* new_neighbor = old_header->next;
+
+	if (new_neighbor != NULL) {
+		make_neighbors(old_header, new_header);
+		make_neighbors(new_header, new_neighbor);
+	} else {
+		make_neighbors(old_header, new_header);
+		new_header->next = NULL;
 	}
 }
 
 unsigned int round_up_size(unsigned int data_size) {
-	if(data_size == 0)
+	if(data_size == 0) {
 		return 0;
-	else if(data_size < MINIMUM_ALLOCATION)
+	} else if(data_size < MINIMUM_ALLOCATION) {
 		return MINIMUM_ALLOCATION;
-	else
+	} else {
 		return (data_size + (SIZE_MULTIPLE - 1)) & ~(SIZE_MULTIPLE - 1);
+	}
 }
 
 void* my_malloc(unsigned int size) {
-	if(size == 0)
+	if(size == 0) {
 		return NULL;
+	}
 
 	size = round_up_size(size);
 
@@ -153,14 +155,19 @@ if (largest_block == NULL) {
 	return  get_block_data(block_header);
 } else {
 		largest_block->used = true;
-		//split(largest_block, size);
+
+		if (can_split(largest_block, size)) {
+			split(largest_block, size);
+		}
+
 		return  get_block_data(largest_block);
 	}
 }
 
 void my_free(void* ptr) {
-	if(ptr == NULL)
+	if(ptr == NULL) {
 		return;
+	}
 
 	Header* cur = get_block_header(ptr);
 	Header* left_neighbor = cur->previous;
